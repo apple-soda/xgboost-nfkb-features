@@ -1,0 +1,7 @@
+Week 0: 
+* hyperparamter tuning for xgboost model may affect accuracy, but more importantly, most important feature selection
+* understand information theory approach and implement that
+* compare and contrast xgboost vs information theory approach
+* compare metrics (f1 score, accuracy, etc) for xgboost features vs information theory features
+
+* possibly test new set of features with lstm model?
