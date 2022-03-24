@@ -11,14 +11,22 @@ def Data(load_dir, names, sheet, merge=False, numpy=False):
         """
         if (numpy == True):
             df = pd.read_csv(load_dir + name + '_' + sheet + '.csv').to_numpy()
+            size = len(df)
+            labels = np.full((size, 1), idx) 
+            df = np.hstack([df, labels])
+            data.append(df)
+        
         else:
             df = pd.read_csv(load_dir + name + '_' + sheet + '.csv')
-        size = len(df)
-        labels = np.full((size, 1), idx) 
-        df = np.hstack([df, labels])
-        data.append(df)
+            size = len(df)
+            labels = np.full((size, 1), idx)
+            labels = pd.DataFrame(labels)
+            df = pd.concat([df, labels], axis=1)
+            data.append(df)
         
-    if (merge == True):
+    if (merge == True and numpy == False):
+        data = pd.concat(data)
+    if (merge == True and numpy == True):
         data = np.vstack(data)
         
     return data
