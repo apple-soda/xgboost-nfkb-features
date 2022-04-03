@@ -1,0 +1,4 @@
+cuda-version: 11.6
+
+be sure to update conda environment for gpu supported xgboost later
+cudatoolkit=11.6
