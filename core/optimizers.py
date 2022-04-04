@@ -7,6 +7,7 @@ from tqdm import tqdm
 
 from core.dataset import *
 from core.dprocessing import *
+from core.utils import *
 
 def optimize_features(features, time_steps, feature_list, dataset, initial_bound, interval, display=True):
     """
@@ -21,7 +22,7 @@ def optimize_features(features, time_steps, feature_list, dataset, initial_bound
     labels = labels.reshape((-1, ))
     
     for i in tqdm(range(interval, 0, -1)):
-        x = 1 / interval
+        x = i / interval
         pfl = feature_list[:int(len(feature_list) * x)]
         data = partition_features(features, time_steps, pfl, 1, dataset) # bound = 1 because we already split the feature_list
         data = data.to_numpy()
@@ -34,6 +35,26 @@ def optimize_features(features, time_steps, feature_list, dataset, initial_bound
         if display is True:
             print(cr)
         
+def optimize_timesteps(features, time_steps, feature_list, dataset, interval, labels, printall=False, printmax=False):
+    """
+    For now just return macro-avg f1 score, will add functionality where it will return what the user specifies
+    """
+    crs = {}
+    for i in tqdm(range(interval, 0, -1)):
+        bound = i / interval
+        if printall is True:
+            _, cr_dic = single_fit(features, time_steps, feature_list, bound, dataset, labels)
+        else:
+            _, cr_dic = single_fit(features, time_steps, feature_list, bound, dataset, labels, display=False)
+            
+        macro_f1 = cr_dic['macro avg']['f1-score']
+        crs[macro_f1] = bound
         
-        
-        
+    return crs.get(max(crs))
+    
+"""
+WHY AM I DIONG 1/ INTERVAL
+THE MATH IS WRONG 
+FIX THIS ASAP
+FACE PALM MAN
+"""
