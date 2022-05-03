@@ -31,12 +31,12 @@ def single_fit(features, time_steps, feature_list, bound, dataset, labels, displ
     
     return [df, cr_dic]
 
-def one_fit(features, dataset, target_names, verbose=True, random_state=True, ret=False):
+def one_fit(features, dataset, target_names, random_state, verbose=True, ret=False):
     X, labels = dataset.loc[:, features].to_numpy(), dataset.iloc[:, [984]].to_numpy().reshape(-1, )
     model = xgb.XGBClassifier(use_label_encoder=False, tree_method='gpu_hist')
     
     if random_state:
-        X_train, X_val, y_train, y_val = train_test_split(X, labels, test_size=0.1, random_state=82)
+        X_train, X_val, y_train, y_val = train_test_split(X, labels, test_size=0.1, random_state=random_state)
     else:
         X_train, X_val, y_train, y_val = train_test_split(X, labels, test_size=0.1)
     
