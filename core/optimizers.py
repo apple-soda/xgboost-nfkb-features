@@ -52,9 +52,30 @@ def optimize_timesteps(features, time_steps, feature_list, dataset, interval, la
         
     return crs.get(max(crs))
     
-"""
-WHY AM I DIONG 1/ INTERVAL
-THE MATH IS WRONG 
-FIX THIS ASAP
-FACE PALM MAN
-"""
+def split_search(dataset, features, splits, target_names, verbose=False):
+    res = []
+    
+    for i in range(len(splits)):
+        split = splits[i] # integer
+        
+        df = dataset.loc[:, features[:split]]
+        data = dataset.loc[:, features[:split]].to_numpy()
+        Y = dataset.iloc[:, [984]].to_numpy().reshape(-1, )
+        X_train, X_val, y_train, y_val = train_test_split(data, Y, test_size=0.1, random_state=50)
+        model = xgb.XGBClassifier(tree_method='gpu_hist', use_label_encoder=False)
+        model.fit(X_train, y_train)
+        pred = model.predict(X_val)
+        cr = classification_report(y_val, pred, target_names=target_names)
+
+        x = model.feature_importances_.argsort()
+        x = x[::-1]
+        f = df.columns[x]
+        res.append([cr, f])
+        
+        if verbose:
+            print(cr)
+        
+        # reinitialize set of features
+        features = f
+        
+    return res

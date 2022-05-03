@@ -31,4 +31,22 @@ def Data(load_dir, names, sheet, merge=False, numpy=False):
         
     return data
 
+def PolarData(load_dir, names, polar_states, merge=False, numpy=False):
+    data = []
+    for i in names: # CpG_am
+        for num, state in enumerate(polar_states):
+            if state == '':
+                x = pd.read_csv(load_dir + i + '.csv')
+            else:
+                x = pd.read_csv(load_dir + i + '_' + state + '.csv')
+            label = np.full((len(x), 1), num)
+            label = pd.DataFrame(label)
+            x = pd.concat([x, label], axis=1) # append to end of dataframe
+            data.append(x)
+    
+    if merge == True:
+        data = pd.concat(data) # append along axis=0
+    
+    return data
+            
     
